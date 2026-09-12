@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseSeederService {
 
+    private static final String TARGARYEN = "Targaryen";
+    private static final String HIGHTOWER = "Hightower";
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -18,16 +21,18 @@ public class DatabaseSeederService {
     }
 
     public void seedDatabase() {
-        User[] users = {
-                new User("1", "Daemon", "Targaryen", "daemon@got.com", "12345678A", "Dragonstone", "Dragonstone", "Crownlands", "28001", Role.ADMIN, true),
-                new User("2", "Rhaenyra", "Targaryen", "rhaenyra@got.com", "23456789B", "Red Keep", "King's Landing", "Crownlands", "28002", Role.MANAGER, true),
-                new User("3", "Alicent", "Hightower", "alicent@got.com", "34567890C", "Hightower", "Oldtown", "Reach", "28003", Role.OPERATOR, false),
-                new User("4", "Otto", "Hightower", "otto@got.com", "45678901D", "Hightower", "Oldtown", "Reach", "28004", Role.CUSTOMER, true),
-                new User("5", "Aemond", "Targaryen", null, null, null, null, null, null, Role.CUSTOMER, true)
-        };
-        for (User user : users) {
-            this.userRepository.save(user);
+        if (this.userRepository.count() > 0) {
+            return;
         }
+
+        User[] users = {
+                new User("1", "Daemon", TARGARYEN, "daemon@got.com", "12345678A", "Dragonstone", "Dragonstone", "Crownlands", "28001", Role.ADMIN, true),
+                new User("2", "Rhaenyra", TARGARYEN, "rhaenyra@got.com", "23456789B", "Red Keep", "King's Landing", "Crownlands", "28002", Role.MANAGER, true),
+                new User("3", "Alicent", HIGHTOWER, "alicent@got.com", "34567890C", HIGHTOWER, "Oldtown", "Reach", "28003", Role.OPERATOR, false),
+                new User("4", "Otto", HIGHTOWER, "otto@got.com", "45678901D", HIGHTOWER, "Oldtown", "Reach", "28004", Role.CUSTOMER, true),
+                new User("5", "Aemond", TARGARYEN, null, null, null, null, null, null, Role.CUSTOMER, true)
+        };
+        this.userRepository.saveAll(java.util.Arrays.asList(users));
     }
 
     public void deleteAll() {

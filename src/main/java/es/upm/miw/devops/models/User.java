@@ -1,25 +1,52 @@
 package es.upm.miw.devops.models;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
 public class User {
 
+    @Id
     private String id;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
+
+    @Column(name = "family_name", nullable = false)
     private String familyName;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "identity")
     private String identity;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "province")
     private String province;
+
+    @Column(name = "postal_code")
     private String postalCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
+
+    @Column(name = "active", nullable = false)
     private Boolean active;
 
     public User() {
         // Empty for framework/deserialization
     }
 
+    @SuppressWarnings("java:S107")
     public User(String id, String firstName, String familyName, String email, String identity,
                 String address, String city, String province, String postalCode, Role role, Boolean active) {
         this.id = id;
