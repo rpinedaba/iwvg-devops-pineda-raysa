@@ -1,5 +1,4 @@
 services:
-
   postgres:
     image: postgres:15.10
     container_name: postgres
@@ -17,11 +16,12 @@ services:
 
 volumes:
   postgres_data:
-    name: "postgres-data"
+    name: postgres-data
 
 networks:
   devopsNet:
-    external: true
+    name: devopsNet
+    driver: bridge
 
 # Construir todas las BD
 #> docker compose -f docker-compose-db.yml -p databases up -d
