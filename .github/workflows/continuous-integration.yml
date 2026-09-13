@@ -73,7 +73,7 @@ jobs:
       - name: 📊 Sonar Analysis
         run: >
           mvn -B sonar:sonar 
-          -Dsonar.projectKey=miw-upm-pineda-raysa_${{ env.ARTIFACT }}
+          -Dsonar.projectKey=rpinedaba_${{ env.ARTIFACT }}
           -Dsonar.organization=rpinedaba 
           -Dsonar.host.url=https://sonarcloud.io 
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
