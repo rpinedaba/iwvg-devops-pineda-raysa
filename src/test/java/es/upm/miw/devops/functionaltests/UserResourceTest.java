@@ -83,4 +83,82 @@ class UserResourceTest {
                 .exchange()
                 .expectStatus().isNotFound();
     }
+
+    @Test
+    void testSearchWithoutFilters() {
+        this.webTestClient.get()
+                .uri(UserResource.USERS)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(5, users.size()));
+    }
+
+    @Test
+    void testSearchByFirstName() {
+        this.webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(UserResource.USERS)
+                        .queryParam("firstName", "Daemon")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> {
+                    assertEquals(1, users.size());
+                    assertEquals("1", users.getFirst().getId());
+                });
+    }
+
+    @Test
+    void testSearchByFamilyName() {
+        this.webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(UserResource.USERS)
+                        .queryParam("familyName", "Targaryen")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(3, users.size()));
+    }
+
+    @Test
+    void testSearchByBillable() {
+        this.webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(UserResource.USERS)
+                        .queryParam("billable", "true")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(4, users.size()));
+
+        this.webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(UserResource.USERS)
+                        .queryParam("billable", "false")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> {
+                    assertEquals(1, users.size());
+                    assertEquals("5", users.getFirst().getId());
+                });
+    }
+
+    @Test
+    void testSearchByAllFilters() {
+        this.webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(UserResource.USERS)
+                        .queryParam("firstName", "Daemon")
+                        .queryParam("familyName", "Targaryen")
+                        .queryParam("billable", "true")
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> {
+                    assertEquals(1, users.size());
+                    assertEquals("1", users.getFirst().getId());
+                });
+    }
 }
