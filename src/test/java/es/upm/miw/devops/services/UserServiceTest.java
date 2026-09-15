@@ -66,6 +66,19 @@ class UserServiceTest {
     }
 
     @Test
+    void testDeleteExistingUser() {
+        this.userService.delete("1");
+        assertEquals(4, this.userService.search(null, null, null).size());
+        assertThrows(NotFoundException.class, () -> this.userService.read("1"));
+    }
+
+    @Test
+    void testDeleteNotFound() {
+        assertThrows(NotFoundException.class, () -> this.userService.delete("non-existent-id"));
+        assertEquals(5, this.userService.search(null, null, null).size());
+    }
+
+    @Test
     void testSearchWithoutFilters() {
         assertEquals(5, this.userService.search(null, null, null).size());
     }
