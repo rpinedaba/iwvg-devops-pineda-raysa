@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(UserResource.USERS)
@@ -20,6 +23,14 @@ public class UserResource {
     @Autowired
     public UserResource(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public List<User> search(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String familyName,
+            @RequestParam(required = false) Boolean billable) {
+        return this.userService.search(firstName, familyName, billable);
     }
 
     @GetMapping(UserResource.ID_ID)
