@@ -79,6 +79,26 @@ class UserServiceTest {
     }
 
     @Test
+    void testUpdateActiveExistingUser() {
+        User updatedUser = this.userService.updateActive("1", false);
+        assertNotNull(updatedUser);
+        assertEquals("1", updatedUser.getId());
+        assertFalse(updatedUser.getActive());
+        assertFalse(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateActiveNotFound() {
+        assertThrows(NotFoundException.class, () -> this.userService.updateActive("non-existent-id", true));
+    }
+
+    @Test
+    void testUpdateActiveNullValue() {
+        assertThrows(org.springframework.web.server.ResponseStatusException.class,
+                () -> this.userService.updateActive("1", null));
+    }
+
+    @Test
     void testSearchWithoutFilters() {
         assertEquals(5, this.userService.search(null, null, null).size());
     }
