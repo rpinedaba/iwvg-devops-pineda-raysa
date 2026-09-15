@@ -25,6 +25,12 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User id: " + id));
     }
 
+    public void delete(String id) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User id: " + id));
+        this.userRepository.delete(user);
+    }
+
     public List<User> search(String firstName, String familyName, Boolean billable) {
         return this.userRepository.findAll().stream()
                 .filter(user -> matchesFirstName(user, firstName))

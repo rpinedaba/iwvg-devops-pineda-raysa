@@ -85,6 +85,29 @@ class UserResourceTest {
     }
 
     @Test
+    void testDelete() {
+        this.webTestClient.delete()
+                .uri(UserResource.USERS + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk();
+
+        this.webTestClient.get()
+                .uri(UserResource.USERS)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(4, users.size()));
+    }
+
+    @Test
+    void testDeleteNotFound() {
+        this.webTestClient.delete()
+                .uri(UserResource.USERS + UserResource.ID_ID, "999")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     void testSearchWithoutFilters() {
         this.webTestClient.get()
                 .uri(UserResource.USERS)
