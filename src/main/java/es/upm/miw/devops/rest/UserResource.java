@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(UserResource.USERS)
@@ -42,5 +45,10 @@ public class UserResource {
     @DeleteMapping(UserResource.ID_ID)
     public void delete(@PathVariable String id) {
         this.userService.delete(id);
+    }
+
+    @PutMapping(UserResource.ID_ID + "/active")
+    public User updateActive(@PathVariable String id, @RequestBody Map<String, Boolean> body) {
+        return this.userService.updateActive(id, body.get("active"));
     }
 }

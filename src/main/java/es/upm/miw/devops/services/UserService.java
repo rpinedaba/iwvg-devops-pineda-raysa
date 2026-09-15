@@ -4,8 +4,10 @@ import es.upm.miw.devops.exceptions.NotFoundException;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +31,16 @@ public class UserService {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User id: " + id));
         this.userRepository.delete(user);
+    }
+
+    public User updateActive(String id, Boolean active) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User id: " + id));
+        if (active == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Active status is required");
+        }
+        user.setActive(active);
+        return this.userRepository.save(user);
     }
 
     public List<User> search(String firstName, String familyName, Boolean billable) {
