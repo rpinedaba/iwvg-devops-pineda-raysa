@@ -1,6 +1,7 @@
 package es.upm.miw.devops.rest.exceptionshandler;
 
 import es.upm.miw.devops.exceptions.NotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,12 +16,18 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({
             NotFoundException.class,
-            NoResourceFoundException.class,
-            ResponseStatusException.class
+            NoResourceFoundException.class
     })
     @ResponseBody
     public ErrorMessage noResourceFoundRequest(Exception exception) {
         return new ErrorMessage(exception, HttpStatus.NOT_FOUND.value());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    @ResponseBody
+    public ErrorMessage responseStatusException(ResponseStatusException exception, HttpServletResponse response) {
+        response.setStatus(exception.getStatusCode().value());
+        return new ErrorMessage(exception, exception.getStatusCode().value());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
