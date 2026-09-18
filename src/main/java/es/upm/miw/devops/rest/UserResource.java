@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(UserResource.USERS)
 public class UserResource {
 
-    public static final String USERS = "/user";
+    public static final String USER = "/user";
+    public static final String USERS = "/users";
     public static final String ID_ID = "/{id}";
 
     private final UserService userService;
@@ -29,7 +28,7 @@ public class UserResource {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping(UserResource.USERS)
     public List<User> search(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String familyName,
@@ -37,17 +36,17 @@ public class UserResource {
         return this.userService.search(firstName, familyName, billable);
     }
 
-    @GetMapping(UserResource.ID_ID)
+    @GetMapping(UserResource.USER + UserResource.ID_ID)
     public User read(@PathVariable String id) {
         return this.userService.read(id);
     }
 
-    @DeleteMapping(UserResource.ID_ID)
+    @DeleteMapping(UserResource.USER + UserResource.ID_ID)
     public void delete(@PathVariable String id) {
         this.userService.delete(id);
     }
 
-    @PutMapping(UserResource.ID_ID + "/active")
+    @PutMapping(UserResource.USER + UserResource.ID_ID + "/active")
     public User updateActive(@PathVariable String id, @RequestBody Map<String, Boolean> body) {
         return this.userService.updateActive(id, body.get("active"));
     }
