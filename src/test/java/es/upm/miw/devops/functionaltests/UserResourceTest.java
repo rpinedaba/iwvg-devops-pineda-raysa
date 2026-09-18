@@ -33,7 +33,7 @@ class UserResourceTest {
     @Test
     void testRead() {
         this.webTestClient.get()
-                .uri(UserResource.USERS + UserResource.ID_ID, "1")
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class)
@@ -56,7 +56,7 @@ class UserResourceTest {
     @Test
     void testReadUserWithNullFields() {
         this.webTestClient.get()
-                .uri(UserResource.USERS + UserResource.ID_ID, "5")
+                .uri(UserResource.USER + UserResource.ID_ID, "5")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class)
@@ -79,7 +79,7 @@ class UserResourceTest {
     @Test
     void testReadNotFound() {
         this.webTestClient.get()
-                .uri(UserResource.USERS + UserResource.ID_ID, "999")
+                .uri(UserResource.USER + UserResource.ID_ID, "999")
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -87,7 +87,7 @@ class UserResourceTest {
     @Test
     void testDelete() {
         this.webTestClient.delete()
-                .uri(UserResource.USERS + UserResource.ID_ID, "1")
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
                 .exchange()
                 .expectStatus().isOk();
 
@@ -102,7 +102,7 @@ class UserResourceTest {
     @Test
     void testDeleteNotFound() {
         this.webTestClient.delete()
-                .uri(UserResource.USERS + UserResource.ID_ID, "999")
+                .uri(UserResource.USER + UserResource.ID_ID, "999")
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -110,7 +110,7 @@ class UserResourceTest {
     @Test
     void testUpdateActive() {
         this.webTestClient.put()
-                .uri(UserResource.USERS + UserResource.ID_ID + "/active", "1")
+                .uri(UserResource.USER + UserResource.ID_ID + "/active", "1")
                 .bodyValue(java.util.Map.of("active", false))
                 .exchange()
                 .expectStatus().isOk()
@@ -122,7 +122,7 @@ class UserResourceTest {
                 });
 
         this.webTestClient.get()
-                .uri(UserResource.USERS + UserResource.ID_ID, "1")
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class)
@@ -132,7 +132,7 @@ class UserResourceTest {
     @Test
     void testUpdateActiveNotFound() {
         this.webTestClient.put()
-                .uri(UserResource.USERS + UserResource.ID_ID + "/active", "999")
+                .uri(UserResource.USER + UserResource.ID_ID + "/active", "999")
                 .bodyValue(java.util.Map.of("active", false))
                 .exchange()
                 .expectStatus().isNotFound();
@@ -141,7 +141,7 @@ class UserResourceTest {
     @Test
     void testUpdateActiveNullValue() {
         this.webTestClient.put()
-                .uri(UserResource.USERS + UserResource.ID_ID + "/active", "1")
+                .uri(UserResource.USER + UserResource.ID_ID + "/active", "1")
                 .bodyValue(java.util.Map.of())
                 .exchange()
                 .expectStatus().isBadRequest();
