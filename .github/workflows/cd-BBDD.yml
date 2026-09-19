@@ -1,0 +1,46 @@
+name: CD - BBDD
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  cd:
+    name: Deploy PostgreSQL on AWS Lightsail
+    runs-on: ubuntu-22.04
+    steps:
+      - name: 🐳 Deploy on AWS Lightsail
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.AWS_LIGHTSAIL_IP_MAIN }}
+          username: ${{ secrets.AWS_LIGHTSAIL_USER_MAIN }}
+          key: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY_MAIN }}
+          script: |
+            docker network create devopsNet || true
+            docker pull postgres:15.10
+            docker rm -f postgres || true
+            docker run -d \
+              --name postgres \
+              --restart always \
+              --network devopsNet \
+              -e POSTGRES_DB=iwvgdevopsdb_vdxx \
+              -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+              -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              -v postgres-data:/var/lib/postgresql/data \
+              postgres:15.10
+            
+            echo "⏳ Esperando a que se levante"
+            for i in $(seq 1 6); do
+              sleep 15
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' postgres 2>/dev/null)
+              echo "Intento $i: $STATUS"
+              [ "$STATUS" = "healthy" ] && break
+            done
+            
+            if [ "$STATUS" != "healthy" ]; then
+              echo "❌ Deploy fallido"
+              docker logs --tail 50 postgres
+              exit 1
+            fi
+            
+            echo "✅ Deploy exitoso"
+            docker image prune --filter "until=12h" -f
