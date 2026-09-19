@@ -13,8 +13,6 @@ spring-doc:
   swagger-ui:
     enabled: true
 spring:
-  profiles:
-    active: prod
   jpa:
     hibernate:
       ddl-auto: update
