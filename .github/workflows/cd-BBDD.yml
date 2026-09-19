@@ -20,6 +20,7 @@ jobs:
             docker rm -f postgres || true
             docker run -d \
               --name postgres \
+              -m 120m \
               --restart always \
               --network devopsNet \
               -e POSTGRES_DB=iwvgdevopsdb_vdxx \
@@ -30,7 +31,8 @@ jobs:
               --health-timeout=5s \
               --health-retries=5 \
               -v postgres-data:/var/lib/postgresql/data \
-              postgres:15.10
+              postgres:15.10 \
+              postgres -c shared_buffers=16MB -c max_connections=20
             
             echo "⏳ Esperando a que se levante"
             for i in $(seq 1 6); do
