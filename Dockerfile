@@ -21,12 +21,11 @@ WORKDIR /app
    # Copia el archivo *jar generado en el contenedor de construcción
 COPY --from=build /app/target/*.jar app.jar
    # Este contenedor escucha el puerto indicado
-EXPOSE 8080
+EXPOSE 10000
 
 # Healthcheck to allow the platform to verify container health
 HEALTHCHECK --interval=120s --timeout=5s --start-period=60s --retries=3 \
-  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
-
+  CMD wget -qO- http://localhost:10000/actuator/health || exit 1
 # Define un comando para cuando se inicialice el contenedor en el host: java -jar app.jar
 CMD ["java", "-jar", "app.jar"]
 
