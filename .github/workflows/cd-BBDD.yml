@@ -25,6 +25,10 @@ jobs:
               -e POSTGRES_DB=iwvgdevopsdb_vdxx \
               -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
               -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d iwvgdevopsdb_vdxx" \
+              --health-interval=10s \
+              --health-timeout=5s \
+              --health-retries=5 \
               -v postgres-data:/var/lib/postgresql/data \
               postgres:15.10
             
