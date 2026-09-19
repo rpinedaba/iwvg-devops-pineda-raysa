@@ -8,15 +8,6 @@ jobs:
     name: Deploy PostgreSQL on AWS Lightsail
     runs-on: ubuntu-22.04
     steps:
-      - name: 🔍 Check SSH key
-        env:
-          SSH_KEY: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY_MAIN }}
-        run: |
-          echo "Key length: ${#SSH_KEY}"
-          echo "First line:"
-          printf '%s\n' "$SSH_KEY" | head -n 1
-          echo "Last line:"
-          printf '%s\n' "$SSH_KEY" | tail -n 1
       - name: 🐳 Deploy on AWS Lightsail
         uses: appleboy/ssh-action@v1.2.1
         with:

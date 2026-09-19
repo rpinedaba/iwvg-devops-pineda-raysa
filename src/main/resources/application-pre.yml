@@ -5,15 +5,13 @@ app:
   hosting: render
 
 spring:
-  profiles:
-    active: pre
   jpa:
     hibernate:
       ddl-auto: update
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/iwvgdevopsdb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
 
