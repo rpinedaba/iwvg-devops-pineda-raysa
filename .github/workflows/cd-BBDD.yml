@@ -8,7 +8,7 @@ jobs:
     name: Deploy PostgreSQL on AWS Lightsail
     runs-on: ubuntu-22.04
     steps:
-      - name: 🐳 Deploy PostgreSQL on AWS Lightsail
+      - name: 🐳 Deploy on AWS Lightsail
         uses: appleboy/ssh-action@8faa84277b88b6cd1455986f459aa66cf72bc8a3
         with:
           host: ${{ secrets.AWS_LIGHTSAIL_IP_MAIN }}
@@ -25,6 +25,11 @@ jobs:
               -e POSTGRES_DB=iwvgdevopsdb_vdxx \
               -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
               -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d iwvgdevopsdb_vdxx" \
+              --health-interval=10s \
+              --health-timeout=5s \
+              --health-retries=5 \
+              -v postgres-data:/var/lib/postgresql/data \
               postgres:15.10
             
             echo "⏳ Esperando a que se levante"
