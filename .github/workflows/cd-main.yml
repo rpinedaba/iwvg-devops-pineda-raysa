@@ -61,7 +61,6 @@ jobs:
           key: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY_MAIN }}
           script: |
             echo ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker network create devopsNet || true
             docker pull ghcr.io/${{ env.REPOSITORY }}:latest
             docker rm -f ${{ env.ARTIFACT }} || true
             docker network inspect devopsNet >/dev/null 2>&1 || docker network create devopsNet
