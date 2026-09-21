@@ -1,5 +1,6 @@
 package es.upm.miw.devops.services;
 
+import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.exceptions.NotFoundException;
 import es.upm.miw.devops.models.Role;
 import es.upm.miw.devops.models.User;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -223,5 +226,46 @@ class UserServiceTest {
         assertEquals("Aegon", this.userService.read("1").getFirstName());
         assertEquals(5, this.userService.search(null, null, null).size());
         assertThrows(NotFoundException.class, () -> this.userService.read("99"));
+    }
+
+    @Test
+    void testUpdateActiveList() {
+        List<User> updatedUsers = this.userService.updateActiveList(
+                List.of(new UserActiveDto("1", false), new UserActiveDto("3", true)));
+        assertEquals(2, updatedUsers.size());
+        assertFalse(this.userService.read("1").getActive());
+        assertTrue(this.userService.read("3").getActive());
+    }
+
+    @Test
+    void testUpdateActiveListNotFound() {
+        List<UserActiveDto> userActiveDtoList = List.of(new UserActiveDto("non-existent-id", false));
+        assertThrows(NotFoundException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+    }
+
+    @Test
+    void testUpdateActiveListNotFoundDoesNotUpdateAnyUser() {
+        List<UserActiveDto> userActiveDtoList =
+                List.of(new UserActiveDto("1", false), new UserActiveDto("non-existent-id", false));
+        assertThrows(NotFoundException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+        assertTrue(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateActiveListWithoutId() {
+        List<UserActiveDto> userActiveDtoList = List.of(new UserActiveDto("   ", false));
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+    }
+
+    @Test
+    void testUpdateActiveListWithoutActive() {
+        List<UserActiveDto> userActiveDtoList = List.of(new UserActiveDto("1", null));
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+    }
+
+    @Test
+    void testUpdateActiveListEmpty() {
+        List<UserActiveDto> userActiveDtoList = List.of();
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
     }
 }
