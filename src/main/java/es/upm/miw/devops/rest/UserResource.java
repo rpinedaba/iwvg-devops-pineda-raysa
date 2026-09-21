@@ -46,6 +46,11 @@ public class UserResource {
         this.userService.delete(id);
     }
 
+    @PutMapping(UserResource.USER + UserResource.ID_ID)
+    public User update(@PathVariable String id, @RequestBody User user) {
+        return this.userService.update(id, user);
+    }
+
     @PutMapping(UserResource.USER + UserResource.ID_ID + "/active")
     public User updateActive(@PathVariable String id, @RequestBody Map<String, Boolean> body) {
         return this.userService.updateActive(id, body.get("active"));
