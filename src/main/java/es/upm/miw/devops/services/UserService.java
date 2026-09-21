@@ -33,6 +33,13 @@ public class UserService {
         this.userRepository.delete(user);
     }
 
+    public User update(String id, User user) {
+        this.assertValidUser(user);
+        this.read(id);
+        user.setId(id);
+        return this.userRepository.save(user);
+    }
+
     public User updateActive(String id, Boolean active) {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User id: " + id));
@@ -49,6 +56,14 @@ public class UserService {
                 .filter(user -> matchesFamilyName(user, familyName))
                 .filter(user -> matchesBillable(user, billable))
                 .toList();
+    }
+
+    private void assertValidUser(User user) {
+        if (!StringUtils.hasText(user.getFirstName()) || !StringUtils.hasText(user.getFamilyName())
+                || user.getRole() == null || user.getActive() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "First name, family name, role and active are required");
+        }
     }
 
     private boolean matchesFirstName(User user, String firstName) {

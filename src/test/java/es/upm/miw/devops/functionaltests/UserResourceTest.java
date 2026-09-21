@@ -224,4 +224,52 @@ class UserResourceTest {
                     assertEquals("1", users.getFirst().getId());
                 });
     }
+
+    @Test
+    void testUpdate() {
+        User user = new User("1", "Aegon", "Targaryen", "aegon@got.com", "56789012E",
+                "Red Keep", "King's Landing", "Crownlands", "28005", Role.MANAGER, false);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(updatedUser -> {
+                    assertNotNull(updatedUser);
+                    assertEquals("1", updatedUser.getId());
+                    assertEquals("Aegon", updatedUser.getFirstName());
+                    assertEquals(Role.MANAGER, updatedUser.getRole());
+                    assertFalse(updatedUser.getActive());
+                });
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(databaseUser -> assertEquals("Aegon", databaseUser.getFirstName()));
+    }
+
+    @Test
+    void testUpdateNotFound() {
+        User user = new User(null, "Aegon", "Targaryen", null, null,
+                null, null, null, null, Role.MANAGER, true);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "999")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testUpdateBadRequest() {
+        User user = new User(null, "Aegon", "Targaryen", null, null,
+                null, null, null, null, null, true);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
 }
