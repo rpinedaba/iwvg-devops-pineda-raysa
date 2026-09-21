@@ -1,5 +1,6 @@
 package es.upm.miw.devops.functionaltests;
 
+import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.models.Role;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.rest.UserResource;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -269,6 +272,49 @@ class UserResourceTest {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID, "1")
                 .bodyValue(user)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void testUpdateActiveList() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", false), new UserActiveDto("3", true)))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(2, users.size()));
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(user -> assertFalse(user.getActive()));
+    }
+
+    @Test
+    void testUpdateActiveListNotFound() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", false), new UserActiveDto("999", false)))
+                .exchange()
+                .expectStatus().isNotFound();
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(user -> assertTrue(user.getActive()));
+    }
+
+    @Test
+    void testUpdateActiveListBadRequest() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", null)))
                 .exchange()
                 .expectStatus().isBadRequest();
     }
