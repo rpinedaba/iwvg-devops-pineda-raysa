@@ -1,10 +1,12 @@
 package es.upm.miw.devops.rest;
 
+import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +51,11 @@ public class UserResource {
     @PutMapping(UserResource.USER + UserResource.ID_ID)
     public User update(@PathVariable String id, @RequestBody User user) {
         return this.userService.update(id, user);
+    }
+
+    @PatchMapping(UserResource.USER)
+    public List<User> updateActiveList(@RequestBody List<UserActiveDto> userActiveDtoList) {
+        return this.userService.updateActiveList(userActiveDtoList);
     }
 
     @PutMapping(UserResource.USER + UserResource.ID_ID + "/active")

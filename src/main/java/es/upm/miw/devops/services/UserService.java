@@ -1,5 +1,6 @@
 package es.upm.miw.devops.services;
 
+import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.exceptions.NotFoundException;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.repositories.UserRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +52,17 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
+    public List<User> updateActiveList(List<UserActiveDto> userActiveDtoList) {
+        this.assertValidUserActiveList(userActiveDtoList);
+        List<User> users = new ArrayList<>();
+        for (UserActiveDto userActiveDto : userActiveDtoList) {
+            User user = this.read(userActiveDto.id());
+            user.setActive(userActiveDto.active());
+            users.add(user);
+        }
+        return this.userRepository.saveAll(users);
+    }
+
     public List<User> search(String firstName, String familyName, Boolean billable) {
         return this.userRepository.findAll().stream()
                 .filter(user -> matchesFirstName(user, firstName))
@@ -63,6 +76,16 @@ public class UserService {
                 || user.getRole() == null || user.getActive() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "First name, family name, role and active are required");
+        }
+    }
+
+    private void assertValidUserActiveList(List<UserActiveDto> userActiveDtoList) {
+        if (userActiveDtoList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User list is required");
+        }
+        if (userActiveDtoList.stream().anyMatch(userActiveDto ->
+                !StringUtils.hasText(userActiveDto.id()) || userActiveDto.active() == null)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id and active are required");
         }
     }
 
