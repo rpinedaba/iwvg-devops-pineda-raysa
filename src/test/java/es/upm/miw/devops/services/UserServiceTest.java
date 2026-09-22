@@ -4,6 +4,7 @@ import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.exceptions.NotFoundException;
 import es.upm.miw.devops.models.Role;
 import es.upm.miw.devops.models.User;
+import es.upm.miw.devops.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +26,9 @@ class UserServiceTest {
 
     @Autowired
     private DatabaseSeederService databaseSeederService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void resetDatabase() {
@@ -267,5 +272,66 @@ class UserServiceTest {
     void testUpdateActiveListEmpty() {
         List<UserActiveDto> userActiveDtoList = List.of();
         assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+    }
+
+    @Test
+    void testSearchOrderedById() {
+        assertEquals(List.of("1", "2", "3", "4", "5"), this.searchedIds());
+        this.userService.updateActive("1", false);
+        assertEquals(List.of("1", "2", "3", "4", "5"), this.searchedIds());
+    }
+
+    @Test
+    void testSearchOrderedByIdWithTwoDigits() {
+        this.userRepository.save(new User("10", "Helaena", "Targaryen", null, null,
+                null, null, null, null, Role.CUSTOMER, true));
+        assertEquals(List.of("1", "2", "3", "4", "5", "10"), this.searchedIds());
+    }
+
+    @Test
+    void testSearchByBillableWithoutIdentity() {
+        this.updateBillableUserWithout(User::setIdentity);
+        assertEquals(List.of("1", "5"), this.searchedIds(false));
+    }
+
+    @Test
+    void testSearchByBillableWithoutAddress() {
+        this.updateBillableUserWithout(User::setAddress);
+        assertEquals(List.of("1", "5"), this.searchedIds(false));
+    }
+
+    @Test
+    void testSearchByBillableWithoutCity() {
+        this.updateBillableUserWithout(User::setCity);
+        assertEquals(List.of("1", "5"), this.searchedIds(false));
+    }
+
+    @Test
+    void testSearchByBillableWithoutProvince() {
+        this.updateBillableUserWithout(User::setProvince);
+        assertEquals(List.of("1", "5"), this.searchedIds(false));
+    }
+
+    @Test
+    void testSearchByBillableWithoutPostalCode() {
+        this.updateBillableUserWithout(User::setPostalCode);
+        assertEquals(List.of("1", "5"), this.searchedIds(false));
+    }
+
+    private void updateBillableUserWithout(BiConsumer<User, String> emptyField) {
+        User user = new User("1", "Daemon", "Targaryen", "daemon@got.com", "12345678A",
+                "Dragonstone", "Dragonstone", "Crownlands", "28001", Role.ADMIN, true);
+        emptyField.accept(user, null);
+        this.userService.update("1", user);
+    }
+
+    private List<String> searchedIds() {
+        return this.searchedIds(null);
+    }
+
+    private List<String> searchedIds(Boolean billable) {
+        return this.userService.search(null, null, billable).stream()
+                .map(User::getId)
+                .toList();
     }
 }
