@@ -13,7 +13,13 @@
 [![DevOps](https://github.com/rpinedaba/iwvg-devops-pineda-raysa/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/rpinedaba/iwvg-devops-pineda-raysa/actions/workflows/continuous-integration.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rpinedaba_iwvg-devops-pineda-raysa&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=rpinedaba_iwvg-devops-pineda-raysa)
 [![Render broken](https://iwvg-devops-pineda-raysa.onrender.com/version-badge)](https://iwvg-devops-pineda-raysa.onrender.com/swagger-ui/index.html)
+[![AWS](http://13.38.52.26:10000/version-badge)](http://13.38.52.26:10000/actuator/health)
 
+
+### :cloud: Comprobación del despliegue en AWS
+* Estado de la aplicación y conexión con PostgreSQL: [/actuator/health](http://13.38.52.26:10000/actuator/health)
+* Datos servidos desde la base de datos: [/users](http://13.38.52.26:10000/users)
+* API completa: [/swagger-ui/index.html](http://13.38.52.26:10000/swagger-ui/index.html)
 
 ### Tecnologías necesarias
 `Java` `Maven` `GitHub` `GitHub Actions` `Sonarcloud` `Slack` `Spring-Boot` `GitHub Packages` `Docker` `OpenAPI`
