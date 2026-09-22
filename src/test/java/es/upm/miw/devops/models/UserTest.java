@@ -69,7 +69,7 @@ class UserTest {
                 () -> assertEquals(user1.hashCode(), user2.hashCode()),
                 () -> assertEquals(user1, user1),
                 () -> assertNotEquals(user1, null),
-                () -> assertNotEquals(user1, "other-type")
+                () -> assertNotEquals(user1, new Object())
         );
     }
 

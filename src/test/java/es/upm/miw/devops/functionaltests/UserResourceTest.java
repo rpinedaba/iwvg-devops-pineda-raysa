@@ -1,5 +1,6 @@
 package es.upm.miw.devops.functionaltests;
 
+import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.models.Role;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.rest.UserResource;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -111,7 +114,7 @@ class UserResourceTest {
     void testUpdateActive() {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID + "/active", "1")
-                .bodyValue(java.util.Map.of("active", false))
+                .bodyValue(false)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class)
@@ -133,7 +136,7 @@ class UserResourceTest {
     void testUpdateActiveNotFound() {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID + "/active", "999")
-                .bodyValue(java.util.Map.of("active", false))
+                .bodyValue(false)
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -223,5 +226,96 @@ class UserResourceTest {
                     assertEquals(1, users.size());
                     assertEquals("1", users.getFirst().getId());
                 });
+    }
+
+    @Test
+    void testUpdate() {
+        User user = new User("1", "Aegon", "Targaryen", "aegon@got.com", "56789012E",
+                "Red Keep", "King's Landing", "Crownlands", "28005", Role.MANAGER, false);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(updatedUser -> {
+                    assertNotNull(updatedUser);
+                    assertEquals("1", updatedUser.getId());
+                    assertEquals("Aegon", updatedUser.getFirstName());
+                    assertEquals(Role.MANAGER, updatedUser.getRole());
+                    assertFalse(updatedUser.getActive());
+                });
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(databaseUser -> assertEquals("Aegon", databaseUser.getFirstName()));
+    }
+
+    @Test
+    void testUpdateNotFound() {
+        User user = new User(null, "Aegon", "Targaryen", null, null,
+                null, null, null, null, Role.MANAGER, true);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "999")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void testUpdateBadRequest() {
+        User user = new User(null, "Aegon", "Targaryen", null, null,
+                null, null, null, null, null, true);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void testUpdateActiveList() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", false), new UserActiveDto("3", true)))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(User.class)
+                .value(users -> assertEquals(2, users.size()));
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(user -> assertFalse(user.getActive()));
+    }
+
+    @Test
+    void testUpdateActiveListNotFound() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", false), new UserActiveDto("999", false)))
+                .exchange()
+                .expectStatus().isNotFound();
+
+        this.webTestClient.get()
+                .uri(UserResource.USER + UserResource.ID_ID, "1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class)
+                .value(user -> assertTrue(user.getActive()));
+    }
+
+    @Test
+    void testUpdateActiveListBadRequest() {
+        this.webTestClient.patch()
+                .uri(UserResource.USER)
+                .bodyValue(List.of(new UserActiveDto("1", null)))
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 }
