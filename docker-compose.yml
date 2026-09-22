@@ -9,6 +9,13 @@ services:
       DB_PASSWORD: postgres
     ports:
       - "8080:8080"
+    # El healthcheck de la imagen apunta al 10000 (perfil prod); en local la app usa el 8080
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 120s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
     networks:
       - devopsNet
 
