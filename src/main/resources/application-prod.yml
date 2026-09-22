@@ -7,7 +7,7 @@ logging:
   level:
     root: WARN
     es.upm.miw: INFO
-spring-doc:
+springdoc:
   api-docs:
     enabled: true
   swagger-ui:
