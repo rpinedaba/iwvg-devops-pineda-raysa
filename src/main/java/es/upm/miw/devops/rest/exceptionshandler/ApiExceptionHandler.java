@@ -3,6 +3,7 @@ package es.upm.miw.devops.rest.exceptionshandler;
 import es.upm.miw.devops.exceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,6 +29,13 @@ public class ApiExceptionHandler {
     public ErrorMessage responseStatusException(ResponseStatusException exception, HttpServletResponse response) {
         response.setStatus(exception.getStatusCode().value());
         return new ErrorMessage(exception, exception.getStatusCode().value());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseBody
+    public ErrorMessage badRequest(Exception exception) {
+        return new ErrorMessage(exception, HttpStatus.BAD_REQUEST.value());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
