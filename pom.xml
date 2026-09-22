@@ -14,7 +14,7 @@
 
     <groupId>es.upm.miw</groupId>
     <artifactId>iwvg-devops-pineda-raysa</artifactId>
-    <version>6.1.35</version>
+    <version>6.2.70</version>
     <packaging>jar</packaging>
     <name>${project.groupId}.${project.artifactId}</name>
     <url>http://github.com/rpinedaba${project.artifactId}</url>
