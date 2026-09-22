@@ -114,7 +114,7 @@ class UserResourceTest {
     void testUpdateActive() {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID + "/active", "1")
-                .bodyValue(java.util.Map.of("active", false))
+                .bodyValue(false)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class)
@@ -136,7 +136,7 @@ class UserResourceTest {
     void testUpdateActiveNotFound() {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID + "/active", "999")
-                .bodyValue(java.util.Map.of("active", false))
+                .bodyValue(false)
                 .exchange()
                 .expectStatus().isNotFound();
     }

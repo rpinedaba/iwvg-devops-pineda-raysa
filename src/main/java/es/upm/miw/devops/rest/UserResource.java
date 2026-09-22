@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserResource {
@@ -59,7 +58,7 @@ public class UserResource {
     }
 
     @PutMapping(UserResource.USER + UserResource.ID_ID + "/active")
-    public User updateActive(@PathVariable String id, @RequestBody Map<String, Boolean> body) {
-        return this.userService.updateActive(id, body.get("active"));
+    public User updateActive(@PathVariable String id, @RequestBody Boolean active) {
+        return this.userService.updateActive(id, active);
     }
 }
