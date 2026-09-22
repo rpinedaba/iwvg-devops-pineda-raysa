@@ -21,8 +21,3 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
-management:
-  endpoint:
-    health:
-      show-details: always
