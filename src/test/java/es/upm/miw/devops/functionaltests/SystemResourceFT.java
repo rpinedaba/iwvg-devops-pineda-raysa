@@ -27,7 +27,8 @@ class SystemResourceFT {
                 .expectBody(String.class)
                 .value(body -> assertThat(body)
                         .isNotNull()
-                        .startsWith("<svg"));
+                        .startsWith("<svg")
+                        .contains("local"));
     }
 
     @Test
