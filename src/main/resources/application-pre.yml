@@ -5,8 +5,6 @@ app:
   hosting: render
 
 spring:
-  profiles:
-    active: pre
   jpa:
     hibernate:
       ddl-auto: update
