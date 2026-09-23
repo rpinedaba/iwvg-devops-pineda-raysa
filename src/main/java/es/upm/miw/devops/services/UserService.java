@@ -2,6 +2,7 @@ package es.upm.miw.devops.services;
 
 import es.upm.miw.devops.dtos.UserActiveDto;
 import es.upm.miw.devops.exceptions.NotFoundException;
+import es.upm.miw.devops.models.Role;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class UserService {
 
     public User update(String id, User user) {
         this.assertValidUser(user);
-        this.read(id);
+        this.assertNotAdminDeactivation(this.read(id), user.getActive());
         user.setId(id);
         return this.userRepository.save(user);
     }
@@ -54,6 +55,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Active status is required");
         }
         User user = this.read(id);
+        this.assertNotAdminDeactivation(user, active);
         user.setActive(active);
         return this.userRepository.save(user);
     }
@@ -70,6 +72,7 @@ public class UserService {
             if (user == null) {
                 throw new NotFoundException(USER_ID + userActiveDto.id());
             }
+            this.assertNotAdminDeactivation(user, userActiveDto.active());
             user.setActive(userActiveDto.active());
             users.add(user);
         }
@@ -83,6 +86,13 @@ public class UserService {
                 .filter(user -> matchesBillable(user, billable))
                 .sorted(BY_NUMERIC_ID)
                 .toList();
+    }
+
+    private void assertNotAdminDeactivation(User user, Boolean active) {
+        if (Boolean.FALSE.equals(active) && Role.ADMIN == user.getRole()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Deactivating an ADMIN user is not allowed. " + USER_ID + user.getId());
+        }
     }
 
     private void assertValidUser(User user) {
