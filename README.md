@@ -19,7 +19,7 @@
 ### :cloud: Comprobación del despliegue en AWS
 * Estado de la aplicación y conexión con PostgreSQL: [/actuator/health](http://13.38.52.26:10000/actuator/health)
 * Datos servidos desde la base de datos: [/users](http://13.38.52.26:10000/users)
-* API completa: [/swagger-ui/index.html](http://13.38.52.26:10000/swagger-ui/index.html)
+* La API no expone Swagger en producción; puede probarse en preproducción: [Render](https://iwvg-devops-pineda-raysa.onrender.com/swagger-ui/index.html)
 
 ### Tecnologías necesarias
 `Java` `Maven` `GitHub` `GitHub Actions` `Sonarcloud` `Slack` `Spring-Boot` `GitHub Packages` `Docker` `OpenAPI`
