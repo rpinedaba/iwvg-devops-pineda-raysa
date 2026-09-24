@@ -1,6 +1,7 @@
 package es.upm.miw.devops.rest;
 
 import es.upm.miw.devops.dtos.UserActiveDto;
+import es.upm.miw.devops.dtos.UserDto;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,8 @@ public class UserResource {
     }
 
     @PutMapping(UserResource.USER + UserResource.ID_ID)
-    public User update(@PathVariable String id, @RequestBody User user) {
-        return this.userService.update(id, user);
+    public User update(@PathVariable String id, @RequestBody UserDto userDto) {
+        return this.userService.update(id, userDto.toUser());
     }
 
     @PatchMapping(UserResource.USER)
