@@ -355,6 +355,23 @@ class UserServiceTest {
     }
 
     @Test
+    void testUpdateCanNotSaveAnInactiveAdmin() {
+        User user = new User("2", "Rhaenyra", "Targaryen", null, null,
+                null, null, null, null, Role.ADMIN, false);
+        assertThrows(ResponseStatusException.class, () -> this.userService.update("2", user));
+        assertTrue(this.userService.read("2").getActive());
+    }
+
+    @Test
+    void testUpdateAdminCanBeDeactivatedWhenTheRoleChanges() {
+        User user = new User("1", "Daemon", "Targaryen", null, null,
+                null, null, null, null, Role.CUSTOMER, false);
+        User updatedUser = this.userService.update("1", user);
+        assertEquals(Role.CUSTOMER, updatedUser.getRole());
+        assertFalse(this.userService.read("1").getActive());
+    }
+
+    @Test
     void testUpdateActiveListAdminCanNotBeDeactivatedWhenRepeated() {
         List<UserActiveDto> userActiveDtoList =
                 List.of(new UserActiveDto("1", true), new UserActiveDto("1", false));
