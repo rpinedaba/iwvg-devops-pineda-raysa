@@ -58,6 +58,7 @@ class UserTest {
     }
 
     @Test
+    @SuppressWarnings("java:S3415") // argument order is intentional: it verifies User.equals(null)
     void testDefaultConstructorAndEquals() {
         User user1 = new User();
         User user2 = new User();
