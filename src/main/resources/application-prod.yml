@@ -9,9 +9,9 @@ logging:
     es.upm.miw: INFO
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
-    enabled: true
+    enabled: false
 spring:
   jpa:
     hibernate:

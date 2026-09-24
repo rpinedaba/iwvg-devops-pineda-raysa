@@ -29,7 +29,7 @@ jobs:
         run: echo "ARTIFACT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: 🛡️ Initialize CodeQL
-        uses: github/codeql-action/init@ed1a0fa18ac745d017ca370dd4ef08bba3b4f504
+        uses: github/codeql-action/init@v3
         with:
           languages: java
           queries: security-extended

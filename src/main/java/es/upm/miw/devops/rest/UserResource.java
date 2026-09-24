@@ -1,6 +1,7 @@
 package es.upm.miw.devops.rest;
 
 import es.upm.miw.devops.dtos.UserActiveDto;
+import es.upm.miw.devops.dtos.UserDto;
 import es.upm.miw.devops.models.User;
 import es.upm.miw.devops.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import java.util.List;
 @RestController
 public class UserResource {
 
-    public static final String USER = "/user";
     public static final String USERS = "/users";
     public static final String ID_ID = "/{id}";
 
@@ -37,27 +37,27 @@ public class UserResource {
         return this.userService.search(firstName, familyName, billable);
     }
 
-    @GetMapping(UserResource.USER + UserResource.ID_ID)
+    @GetMapping(UserResource.USERS + UserResource.ID_ID)
     public User read(@PathVariable String id) {
         return this.userService.read(id);
     }
 
-    @DeleteMapping(UserResource.USER + UserResource.ID_ID)
+    @DeleteMapping(UserResource.USERS + UserResource.ID_ID)
     public void delete(@PathVariable String id) {
         this.userService.delete(id);
     }
 
-    @PutMapping(UserResource.USER + UserResource.ID_ID)
-    public User update(@PathVariable String id, @RequestBody User user) {
-        return this.userService.update(id, user);
+    @PutMapping(UserResource.USERS + UserResource.ID_ID)
+    public User update(@PathVariable String id, @RequestBody UserDto userDto) {
+        return this.userService.update(id, userDto.toUser());
     }
 
-    @PatchMapping(UserResource.USER)
+    @PatchMapping(UserResource.USERS)
     public List<User> updateActiveList(@RequestBody List<UserActiveDto> userActiveDtoList) {
         return this.userService.updateActiveList(userActiveDtoList);
     }
 
-    @PutMapping(UserResource.USER + UserResource.ID_ID + "/active")
+    @PutMapping(UserResource.USERS + UserResource.ID_ID + "/active")
     public User updateActive(@PathVariable String id, @RequestBody Boolean active) {
         return this.userService.updateActive(id, active);
     }

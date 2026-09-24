@@ -89,11 +89,11 @@ class UserServiceTest {
 
     @Test
     void testUpdateActiveExistingUser() {
-        User updatedUser = this.userService.updateActive("1", false);
+        User updatedUser = this.userService.updateActive("2", false);
         assertNotNull(updatedUser);
-        assertEquals("1", updatedUser.getId());
+        assertEquals("2", updatedUser.getId());
         assertFalse(updatedUser.getActive());
-        assertFalse(this.userService.read("1").getActive());
+        assertFalse(this.userService.read("2").getActive());
     }
 
     @Test
@@ -140,12 +140,12 @@ class UserServiceTest {
 
     @Test
     void testUpdate() {
-        User user = new User("1", "Aegon", "Targaryen", "aegon@got.com", "56789012E",
+        User user = new User("2", "Aegon", "Targaryen", "aegon@got.com", "56789012E",
                 "Red Keep", "King's Landing", "Crownlands", "28005", Role.MANAGER, false);
-        User updatedUser = this.userService.update("1", user);
+        User updatedUser = this.userService.update("2", user);
         assertNotNull(updatedUser);
-        assertEquals("1", updatedUser.getId());
-        User databaseUser = this.userService.read("1");
+        assertEquals("2", updatedUser.getId());
+        User databaseUser = this.userService.read("2");
         assertEquals("Aegon", databaseUser.getFirstName());
         assertEquals("Targaryen", databaseUser.getFamilyName());
         assertEquals("aegon@got.com", databaseUser.getEmail());
@@ -236,9 +236,9 @@ class UserServiceTest {
     @Test
     void testUpdateActiveList() {
         List<User> updatedUsers = this.userService.updateActiveList(
-                List.of(new UserActiveDto("1", false), new UserActiveDto("3", true)));
+                List.of(new UserActiveDto("2", false), new UserActiveDto("3", true)));
         assertEquals(2, updatedUsers.size());
-        assertFalse(this.userService.read("1").getActive());
+        assertFalse(this.userService.read("2").getActive());
         assertTrue(this.userService.read("3").getActive());
     }
 
@@ -251,9 +251,9 @@ class UserServiceTest {
     @Test
     void testUpdateActiveListNotFoundDoesNotUpdateAnyUser() {
         List<UserActiveDto> userActiveDtoList =
-                List.of(new UserActiveDto("1", false), new UserActiveDto("non-existent-id", false));
+                List.of(new UserActiveDto("2", false), new UserActiveDto("non-existent-id", false));
         assertThrows(NotFoundException.class, () -> this.userService.updateActiveList(userActiveDtoList));
-        assertTrue(this.userService.read("1").getActive());
+        assertTrue(this.userService.read("2").getActive());
     }
 
     @Test
@@ -277,7 +277,7 @@ class UserServiceTest {
     @Test
     void testSearchOrderedById() {
         assertEquals(List.of("1", "2", "3", "4", "5"), this.searchedIds());
-        this.userService.updateActive("1", false);
+        this.userService.updateActive("2", false);
         assertEquals(List.of("1", "2", "3", "4", "5"), this.searchedIds());
     }
 
@@ -333,5 +333,58 @@ class UserServiceTest {
         return this.userService.search(null, null, billable).stream()
                 .map(User::getId)
                 .toList();
+    }
+
+    @Test
+    void testUpdateActiveAdminCanNotBeDeactivated() {
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActive("1", false));
+        assertTrue(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateActiveAdminCanBeActivated() {
+        assertTrue(this.userService.updateActive("1", true).getActive());
+    }
+
+    @Test
+    void testUpdateAdminCanNotBeDeactivated() {
+        User user = new User("1", "Daemon", "Targaryen", "daemon@got.com", "12345678A",
+                "Dragonstone", "Dragonstone", "Crownlands", "28001", Role.ADMIN, false);
+        assertThrows(ResponseStatusException.class, () -> this.userService.update("1", user));
+        assertTrue(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateCanNotSaveAnInactiveAdmin() {
+        User user = new User("2", "Rhaenyra", "Targaryen", null, null,
+                null, null, null, null, Role.ADMIN, false);
+        assertThrows(ResponseStatusException.class, () -> this.userService.update("2", user));
+        assertTrue(this.userService.read("2").getActive());
+    }
+
+    @Test
+    void testUpdateAdminCanBeDeactivatedWhenTheRoleChanges() {
+        User user = new User("1", "Daemon", "Targaryen", null, null,
+                null, null, null, null, Role.CUSTOMER, false);
+        User updatedUser = this.userService.update("1", user);
+        assertEquals(Role.CUSTOMER, updatedUser.getRole());
+        assertFalse(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateActiveListAdminCanNotBeDeactivatedWhenRepeated() {
+        List<UserActiveDto> userActiveDtoList =
+                List.of(new UserActiveDto("1", true), new UserActiveDto("1", false));
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+        assertTrue(this.userService.read("1").getActive());
+    }
+
+    @Test
+    void testUpdateActiveListAdminCanNotBeDeactivated() {
+        List<UserActiveDto> userActiveDtoList =
+                List.of(new UserActiveDto("2", false), new UserActiveDto("1", false));
+        assertThrows(ResponseStatusException.class, () -> this.userService.updateActiveList(userActiveDtoList));
+        assertTrue(this.userService.read("1").getActive());
+        assertTrue(this.userService.read("2").getActive());
     }
 }
