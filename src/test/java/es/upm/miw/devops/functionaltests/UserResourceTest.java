@@ -332,6 +332,17 @@ class UserResourceTest {
     }
 
     @Test
+    void testUpdateCanNotSaveAnInactiveAdmin() {
+        User user = new User("2", "Rhaenyra", "Targaryen", null, null,
+                null, null, null, null, Role.ADMIN, false);
+        this.webTestClient.put()
+                .uri(UserResource.USER + UserResource.ID_ID, "2")
+                .bodyValue(user)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
     void testUpdateActiveAdminCanNotBeDeactivated() {
         this.webTestClient.put()
                 .uri(UserResource.USER + UserResource.ID_ID + "/active", "1")

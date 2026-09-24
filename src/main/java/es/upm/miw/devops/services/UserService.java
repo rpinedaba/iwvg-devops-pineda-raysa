@@ -45,8 +45,9 @@ public class UserService {
 
     public User update(String id, User user) {
         this.assertValidUser(user);
-        this.assertNotAdminDeactivation(this.read(id), user.getActive());
+        this.read(id);
         user.setId(id);
+        this.assertNotAdminDeactivation(user, user.getActive());
         return this.userRepository.save(user);
     }
 

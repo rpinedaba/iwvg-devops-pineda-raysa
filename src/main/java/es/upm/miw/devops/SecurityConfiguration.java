@@ -18,9 +18,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     @Bean
+    @SuppressWarnings("java:S4502")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                // CSRF protection is disabled because this is a stateless REST API
+                // CSRF protection is disabled because this is a stateless REST API: there are no
+                // cookie-based sessions, so the browser cannot attach credentials automatically
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(auth -> auth
