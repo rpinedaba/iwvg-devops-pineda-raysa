@@ -92,11 +92,11 @@ Se crearán las siguientes 3 historias (**Technical**) pero se trabajarán solo 
 
 #### 5. Preparación del software a desarrollar (**2 ptos**) y siguiente liberación.
 Se crearán las siguientes 4 historias (**Feature**).
-* Feature 1ª: :one: añadir el endpoint: **GET /user/{id}**, sin tests. :five: Crear tests del servicio y del endpoint. Los tests deben realizarse sabiendo que hay un seeder.
+* Feature 1ª: :one: añadir el endpoint: **GET /users/{id}**, sin tests. :five: Crear tests del servicio y del endpoint. Los tests deben realizarse sabiendo que hay un seeder.
 * Feature 2ª: :two: mejorar el filtro de busqueda añadiendo una tercera condición: **billable**, significa que el usuario es facturable,
   eso ocurre cuando sus campos firstName, familyName, email, identity, address, city, province, postalCode tienen contenido real. :eight: añadir los tests de servicio y endpoint.
-* Feature 3ª: :three: añadir el endpoint: **DELETE /user/{id}**, sin tests. :four: añadir los tests de servicio y endpoint.
-* Feature 4ª: :six: añadir el endpoint: **PUT /user/{id}/active**, sin tests. :seven: añadir los tests de servicio y endpoint.
+* Feature 3ª: :three: añadir el endpoint: **DELETE /users/{id}**, sin tests. :four: añadir los tests de servicio y endpoint.
+* Feature 4ª: :six: añadir el endpoint: **PUT /users/{id}/active**, sin tests. :seven: añadir los tests de servicio y endpoint.
 > :one:, :two:... representa el orden temporal de desarrollo de los features. Cuando un feature se termine se debe incorporar a la rama **develop**. Cuando un feature se inicie, siempre empieza de donde este develop.
 > Se debe vigilar la calidad del código, y se cumpla adecuadamente, la IA aunque su código funcione, tenemos que asegurarnos que se cumple las responsabilidades de cada clase y que haga exactamente lo que le pedimos.
 
@@ -104,8 +104,8 @@ Se crearán las siguientes 4 historias (**Feature**).
 
 #### 6. Preparación del software a desarrollar (**2 ptos**) y siguiente liberación.
 Se crearán las siguientes 2 historias (**Feature**).
-* Feature 1ª: :one: añadir el endpoint: **PUT /user/{id}**, sin tests. :three: Crear tests del servicio y del endpoint.
-* Feature 2ª: :two: añadir el endpoint: **PATH /user body:[{id,active}]**, actualiza una lista de usuarios solo con el campo active. :four: añadir los tests de servicio y endpoint.
+* Feature 1ª: :one: añadir el endpoint: **PUT /users/{id}**, sin tests. :three: Crear tests del servicio y del endpoint.
+* Feature 2ª: :two: añadir el endpoint: **PATCH /users body:[{id,active}]**, actualiza una lista de usuarios solo con el campo active. :four: añadir los tests de servicio y endpoint.
 
 > Realizar la tercera liberación del código en **staging** y **main**.
 
